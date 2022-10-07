@@ -29,19 +29,19 @@ def activate():
             
             db = get_db()#obtiene la base de datos  
             attempt = db.execute(
-            'select * from activationlink WHERE challenge=? and state=? ',  #consulta si hay un link de activación relacionado al number que aun no este confirmado
+            "select * from activationlink WHERE challenge=? and state=? ",  #consulta si hay un link de activación relacionado al number que aun no este confirmado
             (number, utils.U_UNCONFIRMED)
             ).fetchone()
 
             if attempt is not None: #Si la variable NO esta vacia
 
                 db.execute(
-                'UPDATE activationlink SET state=? WHERE id =?', #Confirma el link de activación con el id correspondiente, garantizando que sea de un solo uso
+                "UPDATE activationlink SET state=? WHERE id =?", #Confirma el link de activación con el id correspondiente, garantizando que sea de un solo uso
                 (utils.U_CONFIRMED, attempt['id'])
                 )
 
                 db.execute(
-                'INSERT INTO user(username, password,salt,email) VALUES  (?,?,?,?)',  #crea un usuario con la información del link de activación
+                "INSERT INTO user(username, password,salt,email) VALUES  (?,?,?,?)",  #crea un usuario con la información del link de activación
                 (attempt['username'], attempt['password'], attempt['salt'], attempt['email'])
                 )
 
@@ -85,7 +85,7 @@ def register():
                 return render_template('auth/register.html')
 
             if db.execute(
-                'SELECT id FROM user WHERE username = ?',  #Consulta si existe un usuario con ese nombre con el fin de garantizar que sea unico
+                "SELECT id FROM user WHERE username = ?",  #Consulta si existe un usuario con ese nombre con el fin de garantizar que sea unico
                 (username,)).fetchone() is not None:
 
                 error = 'El usuario {} ya está registrado.'.format(username)
@@ -98,7 +98,7 @@ def register():
                 return render_template('auth/register.html')
             
             if db.execute(
-                'SELECT id FROM user WHERE email = ?', #consulta si hay existe un usuario con ese email, garantizando que sea unico
+                "SELECT id FROM user WHERE email = ?", #consulta si hay existe un usuario con ese email, garantizando que sea unico
                 (email,)).fetchone() is not None:
                 error =  'El correo electrónico {} ya está registrado.'.format(email)
                 flash(error)
@@ -115,13 +115,13 @@ def register():
 
             db.execute(
             #crea en la tabla activationlink un registro que se considera no confirmado, manda la clave cifrada y el factor Salt, entre otros datos
-            'INSERT INTO activationlink(challenge, state,username,password,salt,email) VALUES (?,?,?,?,?,?)',
+            "INSERT INTO activationlink(challenge, state,username,password,salt,email) VALUES (?,?,?,?,?,?)",
             (number, utils.U_UNCONFIRMED, username, hashP, salt, email))
 
             db.commit()
 
             credentials = db.execute(
-            'SELECT user,password FROM credentials WHERE name=?',  #consulta los datos del correo con que se envian los mesajes
+            "SELECT user,password FROM credentials WHERE name=?",  #consulta los datos del correo con que se envian los mesajes
             (utils.EMAIL_APP,)
             ).fetchone()
 
@@ -172,13 +172,13 @@ def confirm():
 
             db = get_db() #Obtiene la conexión a la base de datos
             attempt = db.execute(
-            'select * from forgotlink where challenge =? and state=?;',  #trae el forgotlink que concida con el number enviado en el correo y que este activo
+            "select * from forgotlink where challenge =? and state=?",  #trae el forgotlink que concida con el number enviado en el correo y que este activo
             (authid, utils.F_ACTIVE) 
             ).fetchone()
             
             if attempt is not None: #Si la variable NO esta vacia
                 db.execute(
-                'UPDATE forgotlink SET state=? WHERE id =?', #inactiva el forgotlink que tenga el id
+                "UPDATE forgotlink SET state=? WHERE id =?", #inactiva el forgotlink que tenga el id
                 (utils.F_INACTIVE, attempt['id'])
                 )
 
@@ -186,7 +186,7 @@ def confirm():
                 hashP = generate_password_hash(password + salt)  #codifica la nueva contraseña
 
                 db.execute(
-                'UPDATE user SET password=?, salt=? WHERE id =?', #actualiza la nueva contraseña y el salt usado
+                "UPDATE user SET password=?, salt=? WHERE id =?", #actualiza la nueva contraseña y el salt usado
                 (hashP, salt, attempt['userid'])
                 )
 
@@ -212,7 +212,7 @@ def change():
             
             db = get_db() #Obtiene la conexión a la base de datos
             attempt = db.execute(
-            'select * from forgotlink where challenge =? and state=?',  #consulta si hay un forgotlink activo
+            "select * from forgotlink where challenge =? and state=?",  #consulta si hay un forgotlink activo
             (number, utils.F_ACTIVE)
             ).fetchone()
             #Si la variable NO esta vacia
@@ -241,7 +241,7 @@ def forgot():
 
             db = get_db() #Obtiene la conexión a la base de datos
             user = db.execute(
-            'SELECT * FROM user WHERE email=?', #Obtiene el usuario que coincide con el correo
+            "SELECT * FROM user WHERE email=?", #Obtiene el usuario que coincide con el correo
             (email,) 
             ).fetchone()
 
@@ -249,18 +249,18 @@ def forgot():
                 number = hex(random.getrandbits(512))[2:]  #Genera numero aleatorio y lo combierte en hexadecimal 
                 
                 db.execute(
-                'UPDATE forgotlink SET state=? WHERE id =?',#Inactiva forgotlinks relacioandos al usuario
+                "UPDATE forgotlink SET state=? WHERE id =?",#Inactiva forgotlinks relacioandos al usuario
                 (utils.F_INACTIVE, user['id'])                     
                 )
 
                 db.execute(
-                'INSERT INTO forgotlink(userid, challenge,state) VALUES (?,?,?)',# crea un nuevo forgotlink activo
+                "INSERT INTO forgotlink(userid, challenge,state) VALUES (?,?,?)",# crea un nuevo forgotlink activo
                 (user['id'], number, utils.F_ACTIVE)
                 )
                 db.commit()
                 
                 credentials = db.execute(
-                'SELECT user,password FROM credentials WHERE name=?', #obtiene las credenciales de la cuenta para enviar el correo
+                "SELECT user,password FROM credentials WHERE name=?", #obtiene las credenciales de la cuenta para enviar el correo
                 (utils.EMAIL_APP,) 
                 ).fetchone()
                 #contenido del correo y genera la URL para cambiar la contraseña
@@ -302,7 +302,7 @@ def login():
             db = get_db() #Obtiene la conexión a la base de datos
             error = None
             user = db.execute(
-            'SELECT * FROM user WHERE username = ?', #trae los datos del usuario que tenga el username
+            "SELECT * FROM user WHERE username = ?", #trae los datos del usuario que tenga el username
             (username,)
             ).fetchone()
             
@@ -331,7 +331,7 @@ def load_logged_in_user():
         g.user = None
     else:
         g.user = get_db().execute(
-        'SELECT * FROM user WHERE id = ?', 
+        "SELECT * FROM user WHERE id = ?", 
         (user_id,)
         ).fetchone()
 

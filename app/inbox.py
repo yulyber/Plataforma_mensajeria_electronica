@@ -22,7 +22,7 @@ def show():
         id = g.user['id'] #obtiene el id del usuario en sesion
         db = get_db() #llama a la base de datos
         messages = db.execute(
-        'SELECT subject, username, created,body FROM message INNER JOIN user ON message.from_id = user.id  WHERE to_id =? or from_id=?', 
+        "SELECT subject, username, created,body FROM message INNER JOIN user ON message.from_id = user.id  WHERE to_id =? or from_id=?", 
         (id,id)
         #Consulta en la base de datos los mensajes enviados por o para el usuario en sesion
         ).fetchall()
@@ -60,7 +60,7 @@ def send():
         userto = None 
         
         userto = db.execute(
-        'SELECT * FROM user WHERE username = ?', #Trae toda la información del destinatario
+        "SELECT * FROM user WHERE username = ?", #Trae toda la información del destinatario
         (to_username,)
         ).fetchone()
         
@@ -74,7 +74,7 @@ def send():
 
             db = get_db()            
             db.execute(
-            'INSERT INTO message(from_id,to_id,subject,body) VALUES  (?,?,?,?)', #Crea un registro en la tabla mensajes con la información del formulario y de userto
+            "INSERT INTO message(from_id,to_id,subject,body) VALUES  (?,?,?,?)", #Crea un registro en la tabla mensajes con la información del formulario y de userto
             (from_id,  userto['id'], subject, body))           
             db.commit()
 
