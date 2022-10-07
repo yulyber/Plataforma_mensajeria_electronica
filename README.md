@@ -23,15 +23,15 @@ For run the app you need to use `flask run` on the project directory.
 ## Para correr el proyecto
 Si no hay ambiente virtual ejecuta en el Powershell
 
-pip install virtualenv
-virtualenv env
+1. pip install virtualenv
+2. virtualenv env
 
 
 Ejecutar en el CMD
 
-cd .\env
-Scripts\activate.bat
-cd..
-pip3 install -r requirements.txt
-flask init-db
-flask run
+1. cd .\env
+2. Scripts\activate.bat
+3. cd..
+4. pip3 install -r requirements.txt
+5. flask init-db
+6. flask run
